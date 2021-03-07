@@ -1,5 +1,5 @@
 import os
-import cv2
+#import cv2
 import numpy as np
 from skimage import io
 import tensorflow as tf 
@@ -41,12 +41,12 @@ def upload_file():
 
 def load_img(image_location):
     img = io.imread(image_location)
-    img = cv2.resize(img, (128,128), interpolation=cv2.INTER_AREA)
+    img = #cv2.resize(img, (128,128), interpolation=cv2.INTER_AREA)
     return img
 
 def prediction(imgpath):
     im = io.imread(imgpath)
-    im = cv2.resize(im,(128,128))
+    im = #cv2.resize(im,(128,128))
     
     img = np.array(im)/255
     img = img.reshape((1,)+img.shape)
