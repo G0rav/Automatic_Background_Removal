@@ -7,4 +7,3 @@ tensorflow
 matplotlib
 werkzeug
 Jinja2
-keras
