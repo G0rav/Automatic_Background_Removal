@@ -1,0 +1,9 @@
+flask
+gunicorn
+opencv-python
+numpy
+scikit-image
+tensorflow-cpu
+matplotlib
+werkzeug
+Jinja2
