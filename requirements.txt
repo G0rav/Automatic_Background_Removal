@@ -1,0 +1,10 @@
+flask
+gunicorn
+opencv-python
+numpy
+scikit-image
+tensorflow
+matplotlib
+werkzeug
+Jinja2
+keras
