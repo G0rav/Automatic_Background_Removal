@@ -3,7 +3,7 @@ gunicorn
 opencv-python
 numpy
 scikit-image
-tensorflow
+tensorflow-cpu
 matplotlib
 werkzeug
 Jinja2
