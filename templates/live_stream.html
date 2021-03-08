@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- CSS only -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+
+</head>
+
+<body style="padding-top:100px; padding-left:20px; font-family:serif;">
+
+<nav class="navbar fixed-top navbar-dark bg-dark py-4">
+	<div class="container-fluid">
+		<div class="navbar-header">
+		<a class="navbar-brand" href="/">Home</a>
+		<a class="navbar-brand" href="https://github.com/G0rav/Automatic_Background_Remover">Github Source</a>
+		<a class="navbar-brand" href="/live-stream">Live Stream</a>
+		</div>
+	</div>
+</nav>
+
+<a class="btn btn-primary mb-2" href="/live-stream">Predict Image</a>
+
+<div class=" container col-md-8" style="text-align:center;">
+	<h1 style=" color:#002044;">Real Time Video Stream</h1>
+	<br>
+
+	<img class="border border-success" src="{{ url_for('video_feed', toggle=toggle) }}" >
+
+</div>
+
+</body>

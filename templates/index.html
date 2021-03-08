@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- CSS only -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+
+</head>
+
+<body style="padding-top:100px; padding-left:20px; font-family:serif;">
+<nav class="navbar fixed-top navbar-dark bg-dark py-4">
+	<div class="container-fluid">
+		<div class="navbar-header">
+		<a class="navbar-brand" href="/">Home</a>
+		<a class="navbar-brand" href="https://github.com/G0rav/Automatic_Background_Remover">Github Source</a>
+		<a class="navbar-brand" href="/live-stream">Live Stream</a>
+		</div>
+	</div>
+</nav>
+
+<a class="btn btn-primary mb-2" style="text-align:right" href="/live-stream">Real Time Video Stream</a>
+
+<div class=" container col-md-8">
+	<h1 style="text-align:center;">Perfect Potrait Mode</h1>
+	<br>
+
+	<form class="form-inline" action = "/" method = "POST" enctype = "multipart/form-data">
+
+		<div class="form-group">
+			<input class="form-control" type="text" name="url" id="url" placeholder="Enter url. eg.- https://upload.wikimedia.org/wikipedia/commons/6/68/Akha_cropped_hires.JPG">
+			<h6 style="text-align:center; padding:5px; color:#001630;">Or upload an image.</h6>
+			<input  class="form-control" type = "file" name = "image" id = "file-upload">
+		</div> 
+  
+		<div style="text-align:center; padding:20px;">
+			<button type="submit" class="btn btn-primary mb-2">Predict</button>
+		</div>
+
+	 </form>
+
+</div>
+
+<h5 style="text-align:left; color:#002044;">
+If you upload image of size 128*128 pixels, Predictions will be very accurate.
+</br>
+</br>
+{{message}}
+</h5>
+
+
+
+{% if image_name%}
+<div class="container">
+	<div class="row">
+		<div class="col">
+			<h5 style="color:#002044;">Original Image</h5>
+		</div>
+
+		<div class="col">
+			<h5 style="color:#002044;">Masked Image</h5>
+		</div>
+	</div>
+
+	<div class="row">
+
+		<div class="col">
+		<img class="border border-success" src="static/{{image_name}}" style="width: 128px; height: 128px;" >
+		</div>
+
+		<div class="col">
+		<img class="border border-success" src="static/{{pred_image_name}}" style="width: 128px; height: 128px;" >
+		</div>
+	</div>
+</div>
+{%endif%}
+
+</body>
