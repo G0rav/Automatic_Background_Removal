@@ -24,7 +24,7 @@ def upload_file():
             image_file.save(image_location)
 
             new_image = load_img(image_location)
-            new_image_name = 'new_'+image_file.filename
+            new_image_name = 'new_'+image_file.filename+'.jpg'
             new_image_location = save_img(new_image, new_image_name)
 
             pred = prediction(new_image_location)
