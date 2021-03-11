@@ -21,8 +21,14 @@ Datasets used for training:
 
 <img src="https://github.com/G0rav/Automatic_Background_Removal/blob/main/src/Website_Screenshot_pc.png" alt="Website Screenshot">
 
+Mobile version:
+
+ksefncndvnj sncjndj <img src="https://github.com/G0rav/Automatic_Background_Removal/blob/main/src/Website_Screenshot_mobile.jpeg" alt="Website Screenshot">
+
 
 # Model Building:
 
 The model is trained using modified version of U-NET (https://arxiv.org/abs/1505.04597) Architecture first presented by Olaf Ronneberger, Philipp Fischer, Thomas Brox in 2015.
 I have added Residual skip connections in U-NET Model which makes it more robust. 
+
+I can't put model architecture here because of its huuge size. [view here.](https://github.com/G0rav/Automatic_Background_Removal/blob/main/src/Model%20Architecture.png)
