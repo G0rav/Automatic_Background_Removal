@@ -10,7 +10,7 @@ from flask import Flask, render_template, request, Response
 upload_folder = "static"
 app = Flask(__name__)
 
-model = tf.keras.models.load_model('modelcombined_02_0.256591.h5')
+model = tf.keras.models.load_model('modelcombined_04_0.238711.h5')
 
 
 @app.route("/", methods= ['POST', 'GET'])
@@ -27,23 +27,22 @@ def upload_file():
             new_image_name = 'new_'+image_file.filename+'.jpg'
             new_image_location = save_img(new_image, new_image_name)
 
-            pred = prediction(new_image_location)
+            pred = prediction(imgpath=new_image_location, img=None)
             pred_image_name = 'pred_'+image_file.filename
             pred_location = save_img(pred, pred_image_name)            
 
-            return render_template("index.html", message='Your Potrait is Ready.',
+            return render_template("index.html", message='Your Portrait is Ready.',
                                     image_name = new_image_name, pred_image_name= pred_image_name)
          
-        elif URL:
-            #URL = request.form["url"] 
+        elif URL: 
             downloaded_img = load_img(URL)
             downloaded_img_name = URL[-10:-6]+'.jpg'
             downloaded_img_location = save_img(downloaded_img, downloaded_img_name)
 
-            pred = prediction(downloaded_img_location)
+            pred = prediction(imgpath=downloaded_img_location, img=None)
             pred_image_name = 'pred_'+ downloaded_img_name
             pred_location = save_img(pred, pred_image_name)
-            return render_template("index.html", message= 'Your Potrait is Ready.',
+            return render_template("index.html", message= 'Your Portrait is Ready.',
                                     image_name = downloaded_img_name, pred_image_name= pred_image_name)
 
         else:
@@ -72,7 +71,7 @@ def video_feed():
 
 def load_img(image_location):
     img = io.imread(image_location)
-    #img = cv2.resize(img[:,:,0:3], (256,256), interpolation=cv2.INTER_AREA)
+    img = cv2.resize(img[:,:,0:3], (256,256), interpolation=cv2.INTER_AREA)
     return img
 
 def save_img(img,image_name):
@@ -82,8 +81,12 @@ def save_img(img,image_name):
     return image_location
 
 
-def prediction(imgpath):
-    im = io.imread(imgpath)
+def prediction(imgpath=None, img=None):
+    if imgpath:
+        im = io.imread(imgpath)
+    else:
+        im = img.copy()
+    
     im = cv2.resize(im[:,:,0:3],(256,256))
     
     img = np.array(im)/255
@@ -93,8 +96,8 @@ def prediction(imgpath):
     p = pred.copy()
     p = p.reshape(p.shape[1:-1])
 
-    p[np.where(p>.4)] = 1
-    p[np.where(p<.4)] = 0
+    p[np.where(p>.3)] = 1
+    p[np.where(p<.3)] = 0
 
     im[:,:,0] = im[:,:,0]*p 
     im[:,:,0][np.where(p!=1)] = 255
@@ -111,39 +114,16 @@ def gen():
     """Video streaming generator function."""
     while True:
         read_return_code, frame = vc.read()
-        frame = cv2.resize(frame, (640, 360), interpolation=cv2.INTER_AREA)
+        frame = cv2.resize(frame, (360, 360), interpolation=cv2.INTER_AREA)
 
-        frame = live_prediction(frame)
+        frame = prediction(imgpath=None, img=frame)
 
-        frame = cv2.resize(frame, (640, 360), interpolation=cv2.INTER_AREA)
+        frame = cv2.resize(frame, (360, 360), interpolation=cv2.INTER_AREA)
         encode_return_code, image_buffer = cv2.imencode('.jpg', frame)
         io_buf = IO.BytesIO(image_buffer)
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + io_buf.read() + b'\r\n')
 
-
-def live_prediction(img):
-    
-    img = cv2.resize(img,(256,256))
-    im = np.array(img)/255
-    im = im.reshape((1,) + im.shape)
-
-    pred = model.predict(im)
-
-    p = pred.copy()
-    p = p.reshape(p.shape[1:-1])
-
-    p[np.where(p>.4)] = 1
-    p[np.where(p<.4)] = 0
-
-    img[:,:,0] = img[:,:,0]*p 
-    img[:,:,0][np.where(p!=1)] = 255
-    img[:,:,1] = img[:,:,1]*p 
-    img[:,:,1][np.where(p!=1)] = 255
-    img[:,:,2] = img[:,:,2]*p
-    img[:,:,2][np.where(p!=1)] = 255
-
-    return img
 
 
 if __name__ == "__main__":
