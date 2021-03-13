@@ -104,8 +104,8 @@ def prediction(imgpath=None, img=None):
     p = pred.copy()
     p = p.reshape(p.shape[1:-1])
 
-    p[np.where(p>.3)] = 1
-    p[np.where(p<.3)] = 0
+    p[np.where(p>.2)] = 1
+    p[np.where(p<.2)] = 0
 
     im[:,:,0] = im[:,:,0]*p 
     im[:,:,0][np.where(p!=1)] = 255
