@@ -5,6 +5,7 @@ import numpy as np
 from skimage import io
 import tensorflow as tf 
 import matplotlib.pyplot as plt
+from werkzeug.exceptions import BadRequest
 from flask import Flask, render_template, request, Response
 
 upload_folder = "static"
@@ -36,7 +37,7 @@ def upload_file():
          
         elif URL: 
             downloaded_img = load_img(URL)
-            downloaded_img_name = URL[-10:-6]+'.jpg'
+            downloaded_img_name = 'download.jpg'
             downloaded_img_location = save_img(downloaded_img, downloaded_img_name)
 
             pred = prediction(imgpath=downloaded_img_location, img=None)
@@ -124,6 +125,9 @@ def gen():
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + io_buf.read() + b'\r\n')
 
+@app.errorhandler(BadRequest)
+def handle_bad_request(e):
+    return 'bad request!', 400
 
 
 if __name__ == "__main__":
