@@ -7,7 +7,7 @@ A Web API for automatic background removal using Deep Learning. App is made usin
 
 ### Here is the Quick look at it.
 
-<img src="https://github.com/G0rav/Automatic_Background_Removal/blob/main/src/Website_Screenshot_pc.png" alt="Website Screenshot">
+![](https://github.com/G0rav/Automatic_Background_Removal/blob/main/src/Demo.gif)
 
 
 # Model Details:
