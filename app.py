@@ -1,6 +1,8 @@
-import io as IO
 import os
 import cv2
+import random
+import string
+import io as IO
 import numpy as np
 from skimage import io
 import tensorflow as tf 
@@ -12,7 +14,6 @@ upload_folder = "static"
 app = Flask(__name__)
 
 model = tf.keras.models.load_model('modelcombined_04_0.238711.h5')
-
 
 @app.route("/", methods= ['POST', 'GET'])
 def upload_file():
@@ -37,7 +38,8 @@ def upload_file():
          
         elif URL: 
             downloaded_img = load_img(URL)
-            downloaded_img_name = 'download'+ str(next(a)) + '.jpg'
+            downloaded_img_name = ''.join(random.choices(
+                string.ascii_uppercase + string.ascii_lowercase + string.digits, k = 10)) + '.jpg'
             downloaded_img_location = save_img(downloaded_img, downloaded_img_name)
 
             pred = prediction(imgpath=downloaded_img_location, img=None)
@@ -70,13 +72,6 @@ def video_feed():
     )
 
 
-def name():
-    for i in range(999999):
-        yield i
-
-a = name()
-
-
 def load_img(image_location):
     img = io.imread(image_location)
     img = cv2.resize(img[:,:,0:3], (256,256), interpolation=cv2.INTER_AREA)
@@ -104,8 +99,8 @@ def prediction(imgpath=None, img=None):
     p = pred.copy()
     p = p.reshape(p.shape[1:-1])
 
-    p[np.where(p>.2)] = 1
-    p[np.where(p<.2)] = 0
+    p[np.where(p>.25)] = 1
+    p[np.where(p<.25)] = 0
 
     im[:,:,0] = im[:,:,0]*p 
     im[:,:,0][np.where(p!=1)] = 255
@@ -124,6 +119,10 @@ def gen():
         read_return_code, frame = vc.read()
         frame = cv2.resize(frame, (360, 360), interpolation=cv2.INTER_AREA)
 
+        cv2.imshow('Original',frame)
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
+
         frame = prediction(imgpath=None, img=frame)
 
         frame = cv2.resize(frame, (360, 360), interpolation=cv2.INTER_AREA)
@@ -135,4 +134,3 @@ def gen():
 
 if __name__ == "__main__":
     app.run()
-
