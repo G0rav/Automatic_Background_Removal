@@ -37,7 +37,7 @@ def upload_file():
          
         elif URL: 
             downloaded_img = load_img(URL)
-            downloaded_img_name = 'download.jpg'
+            downloaded_img_name = 'download'+ str(next(a)) + '.jpg'
             downloaded_img_location = save_img(downloaded_img, downloaded_img_name)
 
             pred = prediction(imgpath=downloaded_img_location, img=None)
@@ -68,6 +68,13 @@ def video_feed():
         gen(),
         mimetype='multipart/x-mixed-replace; boundary=frame'
     )
+
+
+def name():
+    for i in range(999999):
+        yield i
+
+a = name()
 
 
 def load_img(image_location):
@@ -125,10 +132,7 @@ def gen():
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + io_buf.read() + b'\r\n')
 
-@app.errorhandler(BadRequest)
-def handle_bad_request(e):
-    return 'bad request!', 400
-
 
 if __name__ == "__main__":
     app.run()
+
