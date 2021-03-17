@@ -46,3 +46,4 @@ Validation accuracy - .935
 Training meanIOU - .43
 Validation meanIOU - .43
 ```
+<img src="https://github.com/G0rav/Automatic_Background_Removal/blob/main/src/Evaluation%20chart.png">
