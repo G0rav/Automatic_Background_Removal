@@ -44,4 +44,4 @@ Validation accuracy - 0.907
 Training meanIOU - 0.817
 Validation meanIOU - 0.787
 ```
-<img src="https://github.com/G0rav/Automatic_Background_Removal/blob/main/src/Evaluation%20chart.png">
+<img src="https://github.com/G0rav/Automatic_Background_Removal/blob/main/src/Evaluation_Chart.png">
