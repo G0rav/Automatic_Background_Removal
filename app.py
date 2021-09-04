@@ -17,12 +17,14 @@ app = Flask(__name__)
 
 # load json and create model
 model_path = os.path.join(model_folder, 'model6_fulldata_epoch13.json')
+weight_path = os.path.join(model_folder, 'model6_fulldata_epoch14.h5')
+
 json_file = open(model_path, 'r')
 loaded_model_json = json_file.read()
 json_file.close()
 
 model = tf.keras.models.model_from_json(loaded_model_json)
-model.load_weights("models\model6_fulldata_epoch14.h5")
+model.load_weights(weight_path)
 
 @app.route("/", methods= ['POST', 'GET'])
 def upload_file():
