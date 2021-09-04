@@ -11,11 +11,13 @@ from werkzeug.exceptions import BadRequest
 from flask import Flask, render_template, request, Response
 
 upload_folder = "static"
+model_folder = "models"
 app = Flask(__name__)
 
 
 # load json and create model
-json_file = open('models\model6_fulldata_epoch13.json', 'r')
+model_path = os.path.join(model_folder, 'model6_fulldata_epoch13.json')
+json_file = open(model_path, 'r')
 loaded_model_json = json_file.read()
 json_file.close()
 
