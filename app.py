@@ -13,7 +13,14 @@ from flask import Flask, render_template, request, Response
 upload_folder = "static"
 app = Flask(__name__)
 
-model = tf.keras.models.load_model('modelcombined_04_0.238711.h5')
+
+# load json and create model
+json_file = open('models\model6_fulldata_epoch13.json', 'r')
+loaded_model_json = json_file.read()
+json_file.close()
+
+model = tf.keras.models.model_from_json(loaded_model_json)
+model.load_weights("models\model6_fulldata_epoch14.h5")
 
 @app.route("/", methods= ['POST', 'GET'])
 def upload_file():
@@ -26,15 +33,19 @@ def upload_file():
             image_file.save(image_location)
 
             new_image = load_img(image_location)
-            new_image_name = 'new_'+image_file.filename+'.jpg'
+            new_image_name = 'new_' + ''.join(random.choices(
+                string.ascii_uppercase + string.ascii_lowercase + string.digits, k = 2)) + image_file.filename
             new_image_location = save_img(new_image, new_image_name)
 
-            pred = prediction(imgpath=new_image_location, img=None)
-            pred_image_name = 'pred_'+image_file.filename
-            pred_location = save_img(pred, pred_image_name)            
+            pred,mask = prediction(imgpath=new_image_location, img=None)
+            pred_image_name = 'pred_'+ new_image_name
+            pred_location = save_img(pred, pred_image_name) 
+
+            p_map_image_name = 'pmap_'+ new_image_name
+            p_map_location = save_img(mask, p_map_image_name)         
 
             return render_template("index.html", message='Your Portrait is Ready.',
-                                    image_name = new_image_name, pred_image_name= pred_image_name)
+                                    image_name = new_image_name, pred_image_name= pred_image_name,p_map_image_name = p_map_image_name)
          
         elif URL: 
             downloaded_img = load_img(URL)
@@ -42,19 +53,23 @@ def upload_file():
                 string.ascii_uppercase + string.ascii_lowercase + string.digits, k = 10)) + '.jpg'
             downloaded_img_location = save_img(downloaded_img, downloaded_img_name)
 
-            pred = prediction(imgpath=downloaded_img_location, img=None)
+            pred, mask = prediction(imgpath=downloaded_img_location, img=None)
             pred_image_name = 'pred_'+ downloaded_img_name
             pred_location = save_img(pred, pred_image_name)
+
+            p_map_image_name = 'pmap_'+ downloaded_img_name
+            p_map_location = save_img(mask, p_map_image_name)
+
             return render_template("index.html", message= 'Your Portrait is Ready.',
-                                    image_name = downloaded_img_name, pred_image_name= pred_image_name)
+                                    image_name = downloaded_img_name, pred_image_name= pred_image_name, p_map_image_name = p_map_image_name)
 
         else:
             return render_template("index.html", message='Please upload an image or Enter image url.',
-                                image_name = None, pred_image_name= None)
+                                image_name = None, pred_image_name= None, p_map_image_name = None)
 
     else:
-        return render_template("index.html", message='Upload an image or Enter image url.',
-                                image_name = None, pred_image_name= None)
+        return render_template("index.html", message='Kindly upload an image or Enter image url.',
+                                image_name = None, pred_image_name= None,  p_map_image_name = None)
     
 
 
@@ -90,7 +105,7 @@ def prediction(imgpath=None, img=None):
     else:
         im = img.copy()
     
-    im = cv2.resize(im[:,:,0:3],(256,256))
+    im = cv2.resize(im,(256,256))
     
     img = np.array(im)/255
     img = img.reshape((1,)+img.shape)
@@ -99,8 +114,8 @@ def prediction(imgpath=None, img=None):
     p = pred.copy()
     p = p.reshape(p.shape[1:-1])
 
-    p[np.where(p>.25)] = 1
-    p[np.where(p<.25)] = 0
+    p[np.where(p>0.85)] = 1
+    p[np.where(p<0.85)] = 0
 
     im[:,:,0] = im[:,:,0]*p 
     im[:,:,0][np.where(p!=1)] = 255
@@ -109,7 +124,7 @@ def prediction(imgpath=None, img=None):
     im[:,:,2] = im[:,:,2]*p
     im[:,:,2][np.where(p!=1)] = 255
 
-    return im
+    return im,p
 
 vc = cv2.VideoCapture(0)
 
@@ -123,7 +138,7 @@ def gen():
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
 
-        frame = prediction(imgpath=None, img=frame)
+        frame,p = prediction(imgpath=None, img=frame)
 
         frame = cv2.resize(frame, (360, 360), interpolation=cv2.INTER_AREA)
         encode_return_code, image_buffer = cv2.imencode('.jpg', frame)
